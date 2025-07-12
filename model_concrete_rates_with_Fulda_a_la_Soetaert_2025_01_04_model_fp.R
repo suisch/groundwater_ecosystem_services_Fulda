@@ -11,53 +11,48 @@ library(colorblindr)
 rm(list = ls())
 
 ##########
-#which run in the excel file
+#the runs with the different parameters are listed in the excel file
 ##########
 run <- 1
 
 ##########
 #preparing read-in of data
 ##########
- gw_FuldaAue_ecosystem_services_path <-"/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_ecosystem_services_Fulda_plain"
-  gw_FuldaAuePublished_path <-"/Users/susanneschmidt/Documents/head/Arbeit/projects/0_finished/2021_gw_FuldaAue"
-  gw_FuldaEcosystemServices_plots_path <-"/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_ecosystem_services_Fulda_plain/results/plots"
-  gw_FuldaEcosystemServices_results_txt_path <-"/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_ecosystem_services_Fulda_plain/results/txt"
-  
-  source("/Users/susanneschmidt/Documents/head/Arbeit/projects/BIGFE_nc/nc_ufz_sharedwithme/BIGFE/Daten/R/functions/codeByOthers/dbSafeNames.R")
+
+
+#define these paths for saving your result text files locally
+gw_FuldaEcosystemServices_plots_path <-""
+  gw_FuldaEcosystemServices_results_txt_path <-""
  
-  figwd <- "/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_sampling/results/plots"
-  figwdJenaMap <- "/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_Jena/results/maps" 
-  figwdJena_overtime <- "/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_Jena/results/over_time" 
-  figwdJena_MDS <-"/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_Jena/results/MDS"
-  
-  setwd("/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_ecosystem_services_Fulda_plain")
-      Fulda_daily_temp_joh_long <- read.table( "Fulda_daily_temp_joh_long.txt", header = TRUE) 
-  
-  conPostGres = dbConnect(RPostgres::Postgres(), user="postgres", password="postgre",
-                          host="localhost", port=5432, dbname="postgres") # 
-  
-  setwd("/Users/susanneschmidt/Documents/head/Arbeit/projects/0_finished/2021_gw_FuldaAue")
-  
-  setwd("/Users/susanneschmidt/Documents/head/Arbeit/projects/git/gw_ecosystem_services/Fulda_plains/R_git/branch_Soetaert")
-  source("model_concrete_rates_with_Fulda_a_la_Soetaert_2025_01_04_Fulda.R") ##fulda_variables
-  source("model_concrete_rates_with_Fulda_a_la_Soetaert_2025_01_04_parameter_variables.R")
+12.7.25 den hier oder gehe ich durch variables ?
+urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/Fulda_daily_temp_joh_long.txt"
+Fulda_daily_temp_joh_long <- read.table(urlfiletext,sep = " ", header = TRUE)  
+
+urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/model_concrete_rates_with_Fulda_a_la_Soetaert_2025_01_04_Fulda_fp.R"
+source(urlfiletext)  ##fulda_variables
+
+urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/model_concrete_rates_with_Fulda_a_la_Soetaert_2025_01_04_parameter_variables.R"
+6.7.25 ist noch nicht hoch geladen.
+sollte sowieso erst mal datienamen aendern
+  source(urlfiletext)
            
   ########
   #functions reactions
-  setwd("~/Documents/head/Arbeit/projects/git/gw_ecosystem_services/Fulda_plains/R_git/functions")
   
-  source("model_functions.R")
+  urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/model_functions_fp.R"
+source(urlfiletext)
   
-  setwd("/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_ecosystem_services_Fulda_plain")
-  parvar <- read.xlsx("parameters_variables.xlsx", startRow = 3, sheet = 1)
+ urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/parameters_variables_fp.xlsx"
+noch nicht hoch geladen
+ parvar <- read.xlsx(urlfiletext, startRow = 3, sheet = 1)
   
-  setwd("/Users/susanneschmidt/Documents/head/Arbeit/projects/git/gw_ecosystem_services/Fulda_plains/R_git/functions")
-source("Fulda_prec_plot.R")
+  urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/Fulda_prec_plot.R"
+source(urlfiletext)
 
 
 
 ##########
-#reading in Fulda data  from file
+#reading in Fulda data from file
 ##########
 
 scenario_with_1_or_without_0_MO <-  parvar$scenario_with_1_or_without_0_MO[run]  
@@ -97,8 +92,9 @@ list2env(parameter_variables_read_in, globalenv())
 
 temperature_scenario <- parvar$temperature_scenario[run]
 
-setwd("/Users/susanneschmidt/Documents/head/Arbeit/projects/gw_ecosystem_services_Fulda_plain")
-Fulda_daily_temp_joh_long <- read.table( "Fulda_daily_temp_joh_long.txt", header = TRUE)
+urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/Fulda_daily_temp_joh_long.txt"
+Fulda_daily_temp_joh_long <- read.table(urlfiletext,sep = " ", header = TRUE)  
+
 Fulda_daily_temp_joh_long$dateRi <- as.Date(Fulda_daily_temp_joh_long$dateRi)
 Fulda_daily_temp_joh_long$TT_TER <- Fulda_daily_temp_joh_long$TT_TER + temperature_scenario #air temperature
 Fulda_daily_temp_joh_long$value <- Fulda_daily_temp_joh_long$value + temperature_scenario #daily groundwater temperature extrapolated from air temperature
@@ -112,17 +108,16 @@ results <- NULL
 if(is.na(max_t)){
   t_max = t_max
 }else{
-  t_max = max_t #set another end date than the one in the Fulda study
+  t_max = max_t #set another end date than the one in the Fulda study; max_t is read in from parameter_variables
 }
 
 ##########
-#reading in Fulda precitiatoin plot because that does not depend on model variables, but depends on fulda_variables_read_in
+#reading in Fulda precitiation plot - does not depend on model variables, but depends on Fulda_daily_prec in fulda_variables_read_in, and thus, cannot be read in earlier than this
 ##########
 
-# depends on Fulda_daily_prec
-setwd("/Users/susanneschmidt/Documents/head/Arbeit/projects/git/gw_ecosystem_services/Fulda_plains/R_git/functions")
-source("Fulda_prec_plot.R")
-Fulda_prec_plotted <- Fulda_prec_plot(enddate  = t_max)
+urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/Fulda_prec_plot.R"
+source(urlfiletext)
+Fulda_prec_plotted <- Fulda_prec_plot(enddate = t_max)
 
 ##########
 #over time
@@ -135,16 +130,14 @@ results1 <- as.data.frame(results1)
 
 results1$group <- 1
 results1$DETRITUS[1] <- DETRITUS_gr1_t0 #mol COD / L, was OS
-results1$import_from_detritus <- 0
+results1$import_from_detritus[1] <- 0
 results1$BOC[1] <- BOC_gr1_t0
-results1$Ace[1] <- acetic_acids_fraction* results1$BOC[1] #2.6.25 not used
-
 
 results1$MO_het[1] <- MO_het_gr1_t0
+
+den bruahe ich doch nicht - die zeile drueber muesste doch reichen ?! 
 results1$MO_het <- MO_het_gr1_t0 #dry mass mol COD / L
-results1$growthrate <- 0
 results1$fauna[1] <- fauna_gr1_t0
-results1$totalC[1] <-  results1$DETRITUS[1] + results1$BOC[1] + results1$MO_het[1] + results1$fauna[1] 
 
 
 # group 2
@@ -156,13 +149,12 @@ results2$group <- 2
 results2$DETRITUS[1] <- DETRITUS_gr2_t0 #mol COD / L
 results2$import_from_detritus <- 0
 results2$BOC[1] <- BOC_gr2_t0
-results2$Ace[1] <- acetic_acids_fraction* results2$BOC[1]
 
 results2$MO_het[1] <- MO_het_gr2_t0
+?
 results2$MO_het <- MO_het_gr2_t0 #mol COD / L
-results2$growthrate <- 0
 results2$fauna <- fauna_gr2_t0
-results2$totalC[1] <-  results2$DETRITUS[1] + results2$BOC[1] + results2$MO_het[1] + results2$fauna[1] 
+
 
 # group 3
 results3 <- NULL
@@ -173,13 +165,12 @@ results3$group <- 3
 results3$DETRITUS[1] <- DETRITUS_gr3_t0 #mol COD / L
 results3$import_from_detritus <- 0
 results3$BOC[1] <- BOC_gr3_t0
-results3$Ace[1] <- acetic_acids_fraction* results3$BOC[1]
 
 results3$MO_het[1] <- MO_het_gr3_t0
+
+?
 results3$MO_het <- MO_het_gr3_t0 #mol COD / L
-results3$growthrate <- 0
 results3$fauna <- fauna_gr3_t0
-results3$totalC[1] <-  results3$DETRITUS[1] + results3$BOC[1] + results3$MO_het[1] + results3$fauna[1] 
 
 
 # group 4
@@ -191,13 +182,12 @@ results4$group <- 4
 results4$DETRITUS[1] <- DETRITUS_gr4_t0 #mol COD / L
 results4$import_from_detritus <- 0
 results4$BOC[1] <- BOC_gr4_t0
-results4$Ace[1] <- acetic_acids_fraction* results4$BOC[1]
 
 results4$MO_het[1] <- MO_het_gr4_t0
+?
 results4$MO_het <- MO_het_gr4_t0 #mol COD / L
 results4$growthrate <- 0
 results4$fauna <- fauna_gr4_t0
-results4$totalC[1] <-  results4$DETRITUS[1] + results4$BOC[1] + results4$MO_het[1] + results4$fauna[1] 
 
 
 results <- rbind(results1, results2, results3, results4)
@@ -231,12 +221,9 @@ for (g in 1:length(unique(results$group))){
     
     RECHARGE_COD_mol_per_L_per_day_df_ti <- RECHARGE_COD_mol_per_m3_per_day_df_ti /1000
     
-    #take the field of the  Date == Date[i] aund group == group[g] 
-    DETRITUS_ti_minus_1 <- results$DETRITUS[results$dateRi == uniquedatevector[i-1] & results$group == uniquegroupvector[g]] # mol COD / L 
-    
+    #take the respective field of the  Date == Date[i] aund group == group[g] 
+    DETRITUS_ti_minus_1 <- results$DETRITUS[results$dateRi == uniquedatevector[i-1] & results$group == uniquegroupvector[g]]     
     BOC_ti_minus_1 <- results$BOC[results$dateRi == uniquedatevector[i-1] & results$group == uniquegroupvector[g]]
-    Ace_ti_minus_1 <- results$Ace[results$dateRi == uniquedatevector[i-1] & results$group == uniquegroupvector[g]]
-    
 
     MO_het_ti_minus_1 <- results$MO_het[results$dateRi == uniquedatevector[i-1] & results$group == uniquegroupvector[g]] 
     
@@ -244,7 +231,6 @@ for (g in 1:length(unique(results$group))){
     
     
     BOC_import_from_detritus_ti <- dCOD_from_detritus_dt(k1, DETRITUS_ti_minus_1) #mol COD / L
-    Ace_import_from_detritus_ti <- dCOD_from_detritus_dt(k1, acetic_acids_fraction *DETRITUS_ti_minus_1)
     
     
     if (scenario_with_1_or_without_0_fauna == 1) {
@@ -253,7 +239,7 @@ for (g in 1:length(unique(results$group))){
       
       Mortality <- dMortality_dt(mortalityRate, mortalityFraction_per_degree, Fauna_ti_minus_1, GWTEMP_ti  ) 
       
-      f_S_fauna_Petzoldt_2018 <- dMO_fauna_degradation_factor_dt(MO_het_ti_minus_1,   rFauna_MO_uptake_per_day_at_TEMP , K_MO_at_temp, Fauna_ti_minus_1, delta_t, growth_model_fauna_type, CC_group_fauna_g)
+      f_S_fauna <- dMO_fauna_degradation_factor_dt(MO_het_ti_minus_1,   rFauna_MO_uptake_per_day_at_TEMP , K_MO_at_temp, Fauna_ti_minus_1, delta_t, growth_model_fauna_type, CC_group_fauna_g)
 
       Fauna_ti_list <- dMO_fauna_uptake_dt(MO_het_ti_minus_1,   rFauna_MO_uptake_per_day_at_TEMP , K_MO_at_temp, Fauna_ti_minus_1, delta_t, growth_model_fauna_type, CC_group_fauna_g, yield_MO, Excretion , Mortality)
 
@@ -261,7 +247,7 @@ for (g in 1:length(unique(results$group))){
       Fauna_ti <- Fauna_ti_list[[2]]
        
     }else{
-      f_S_fauna_Petzoldt_2018 <- 0
+      f_S_fauna <- 0
 
       Fauna_ti <- 0
       Fauna_growth <- 0
@@ -270,28 +256,22 @@ for (g in 1:length(unique(results$group))){
     }
     
     
-    rMO_BOC_uptake_per_day_at_TEMP <- d_COD_MO_het_uptake_dt_per_day_per_temperature( rMO_BOC_uptake_per_day_at_lab_temperature,  GWTEMP_ti, lab_temp) #
+    rMO_BOC_uptake_per_day_at_TEMP <- d_COD_MO_het_uptake_dt_per_day_per_temperature( rMO_BOC_uptake_per_day_at_lab_temperature,  GWTEMP_ti, lab_temp) 
  
     K_ac_at_TEMP <- d_K_ac_per_temperature(K_ac, lab_temp, GWTEMP_ti) 
  
-    #part of COD = BOC degraded  . mol / l
-    f_S_MO_Soetaert_2008 <- dCOD_degradation_factor_dt(BOC_ti_minus_1,   rMO_BOC_uptake_per_day_at_TEMP, K_ac_at_TEMP, MO_het_ti_minus_1, delta_t, growth_model_MO_type, CC_group_MO_g)
+    #how much COD = BOC degraded 
+    f_S_MO <- dCOD_degradation_factor_dt(BOC_ti_minus_1,   rMO_BOC_uptake_per_day_at_TEMP, K_ac_at_TEMP, MO_het_ti_minus_1, delta_t, growth_model_MO_type, CC_group_MO_g)
  
- f_S_Ace_MO_Soetaert_2008 <- dCOD_degradation_factor_dt(Ace_ti_minus_1,   rMO_BOC_uptake_per_day_at_TEMP, K_ac_at_TEMP, MO_het_ti_minus_1, delta_t, growth_model_MO_type, CC_group_MO_g)
-
-    MO_het_ti_list  <- dCOD_MO_degradation_dt(BOC_ti_minus_1,   rMO_BOC_uptake_per_day_at_TEMP,  K_ac_at_TEMP, MO_het_ti_minus_1, yield_ac, f_S_fauna_Petzoldt_2018, delta_t, growth_model_MO_type, CC_group_MO_g) 
+    MO_het_ti_list  <- dCOD_MO_degradation_dt(BOC_ti_minus_1,   rMO_BOC_uptake_per_day_at_TEMP,  K_ac_at_TEMP, MO_het_ti_minus_1, yield_ac, f_S_fauna, delta_t, growth_model_MO_type, CC_group_MO_g) 
     MO_growth <- MO_het_ti_list[[1]]
     MO_het_ti <- MO_het_ti_list[[2]]
     
-    # how much COD = BOC degraded actually
-    #first, set present COD = BOC 
-        BOC_ti_interim <- dCOD_stock_dt(BOC_ti_minus_1,  f_S_MO_Soetaert_2008, BOC_import_from_detritus_ti, Excretion) # mol COD / L
-        Ace_ti_interim <- dCOD_stock_dt(Ace_ti_minus_1,  f_S_Ace_MO_Soetaert_2008,  Ace_import_from_detritus_ti, acetic_acids_fraction * Excretion) 
+        BOC_ti_interim <- dCOD_stock_dt(BOC_ti_minus_1,  f_S_MO, BOC_import_from_detritus_ti, Excretion) 
         BOC_ti            <- max(0, BOC_ti_interim)      # to avoid errors when COD = BOC becomes slightly negative.. From Soetaert (2008)
-        Ace_ti            <- max(0,Ace_ti_interim)   
         
 
-    #since this happens in this time step, the new Detritus is not used - the detritus from the time step before is used
+    #since this happens in this time step, the new Detritus is not used for further reactions in this time step - the detritus from the time step before is used
     DETRITUS_ti <- dDETRITUS_dt( k1, DETRITUS_ti_minus_1, RECHARGE_COD_mol_per_L_per_day_df_ti, Mortality ) 
 
     results$MO_het[results$dateRi == uniquedatevector[i] & results$group == uniquegroupvector[g]] <- MO_het_ti
@@ -300,19 +280,14 @@ for (g in 1:length(unique(results$group))){
     
     results$BOC[results$dateRi == uniquedatevector[i] & results$group == uniquegroupvector[g]] <- BOC_ti
     
- 
       results$growthrate[results$dateRi == uniquedatevector[i] & results$group == uniquegroupvector[g]] <- rMO_BOC_uptake_per_day_at_TEMP
     
-    results$Ace[results$dateRi == uniquedatevector[i] & results$group == uniquegroupvector[g]] <- Ace_ti 
-
     results$DETRITUS[results$dateRi == uniquedatevector[i] & results$group == uniquegroupvector[g]] <- DETRITUS_ti 
 
     RECHARGE_COD_mol_per_L_per_day_df_ti + Mortality
     
     results$import_from_detritus[results$dateRi == uniquedatevector[i] & results$group == uniquegroupvector[g]] <- BOC_import_from_detritus_ti 
     
-      
-    results$totalC[results$dateRi == uniquedatevector[i] & results$group == uniquegroupvector[g]]   <-  DETRITUS_ti + BOC_ti + MO_het_ti + Fauna_ti 
     
   } #end groups
 }#end time
@@ -329,7 +304,6 @@ results_gr_1 <- results %>%
   dplyr::filter(group == 1)
 results_gr_1[c(1:5, 800:810),]
 
-
 results_gr_2 <- results %>%
   dplyr::filter(group == 2)
 results_gr_2[c(1:5, 800:810),]
@@ -339,7 +313,7 @@ results_gr_3 <- results %>%
 results_gr_3[c(1:5, 800:810),]
 
 
-#ggplot #needs data frame
+#ggplot requires the data to be in data frame
 results_df <- as.data.frame(results)
 
 setwd(gw_FuldaEcosystemServices_results_txt_path) 
@@ -574,8 +548,7 @@ if (unified_axes == 1) {
                   se=TRUE,  formula = my.formula, lwd = 0.3) 
       ) 
 
-Fulda_prec_plotted +  Fulda_Detritus_partOrganics_plot  + Fulda_BOC_plot + Fulda_MO_plot + Fulda_fauna_plot + plot_layout(ncol = 1) +#https://ggplot2-book.org/arranging-plots.html
-  #see also https://r-charts.com/ggplot2/combining-plots/
+Fulda_prec_plotted +  Fulda_Detritus_partOrganics_plot  + Fulda_BOC_plot + Fulda_MO_plot + Fulda_fauna_plot + plot_layout(ncol = 1) +
   plot_annotation(tag_levels = "a", tag_suffix = ")")
   
 
@@ -598,7 +571,7 @@ ggsave(paste0("model_measured_trend_2025_06_30_run_",run,"_with_MO_free_y_scale.
 }
 
 
-
+#in order to produce plots which compare the runs, read the four run results from files saved previously
 setwd(gw_FuldaEcosystemServices_results_txt_path)
 
 results_df_54 <- read.table( "results_df_2025_06_30_run_54.txt", header = TRUE)
@@ -706,9 +679,7 @@ override.linewidth <- c(1.2, 1.1, .82, .81,  .31,  .3)
 
 (plot_trends_BOC <- ggplot(data = results_df__for_overview_all)+
    geom_smooth(method = "lm",
-                  data = results_df__for_overview_all, aes(x = dateRi, y = BOC, colour = as.factor(colour_for_plot), lty =  as.factor(line), lwd = as.factor(linewidth)
-                  ),
-                  se=FALSE,  formula = my.formula )+ 
+                  data = results_df__for_overview_all, aes(x = dateRi, y = BOC, colour = as.factor(colour_for_plot), lty =  as.factor(line), lwd = as.factor(linewidth) ), se=FALSE,  formula = my.formula )+ 
     scale_colour_manual("Run",values = c("#009E73", "#F0E442", "#0072B2", "#E69F00", "#56B4E9", "#D55E00") ,
                           labels = c("Reference", "No fauna", "+1.5°C", "No fauna  +1.5°C", "+3°C", "No fauna +3°C"))+
         scale_linetype_manual("Run", values = c(1, 5, 2, 6, 3, 4),
@@ -764,8 +735,7 @@ ggsave(paste0("plot_trends_BOC_54_55_56_57_58_59__2025_06_30_free_y_scale.png"),
     guides(colour = guide_legend(override.aes = list(line = override.line, colour = override.col, linewidth = override.linewidth))) +
 
     labs(x = "Date", y = "Micoorganisms [mol COD / L]") +
-    theme(panel.background = element_rect(fill = "white",  colour = "black",   
-                                          linetype = "solid" ),
+    theme(panel.background = element_rect(fill = "white",  colour = "black",  linetype = "solid" ),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           axis.text = element_text(colour = "black"), 
@@ -782,23 +752,19 @@ ggsave("plot_trends_MO_54_55_56_57_58_59__2025_06_30.png", width = 8, height = 2
 
 (plot_trends_fauna <- ggplot(data = results_df__for_overview_all)+
     geom_smooth(method = "lm",
-                  data = results_df__for_overview_all, aes(x = dateRi, y = fauna, colour = as.factor(colour_for_plot), lty =  as.factor(line), lwd = as.factor(linewidth)
-                  ), 
+                  data = results_df__for_overview_all, aes(x = dateRi, y = fauna, colour = as.factor(colour_for_plot), lty =  as.factor(line), lwd = as.factor(linewidth)  ), 
                   se=FALSE,  formula = my.formula )+
     scale_colour_manual("Run",values = c("#009E73", "#F0E442", "#0072B2", "#E69F00", "#56B4E9", "#D55E00") ,
                           labels = c("Reference", "No fauna", "+1.5°C", "No fauna  +1.5°C", "+3°C", "No fauna +3°C"))+
         scale_linetype_manual("Run", values = c(1, 5, 2, 6, 3, 4),
                           labels = c("Reference", "No fauna", "+1.5°C", "No fauna  +1.5°C", "+3°C", "No fauna +3°C"))+
-
     scale_linewidth_manual("Run", values = c(1.2, 1.1, .82, .81,  .31,  .3),
                           labels = c("Reference", "No fauna", "+1.5°C", "No fauna  +1.5°C", "+3°C", "No fauna +3°C"))+
 
     guides(colour = guide_legend(override.aes = list(line = override.line, colour = override.col, linewidth = override.linewidth))) +
 
-
     labs(x = "Date", y = "Fauna [mol COD / L]") +
-    theme(panel.background = element_rect(fill = "white",  colour = "black",   
-                                          linetype = "solid" ),
+    theme(panel.background = element_rect(fill = "white",  colour = "black",  linetype = "solid" ),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           axis.text = element_text(colour = "black"), 
