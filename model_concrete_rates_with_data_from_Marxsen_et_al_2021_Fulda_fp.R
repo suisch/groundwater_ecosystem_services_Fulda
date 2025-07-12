@@ -136,13 +136,13 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   
   #used for start values
   fauna_deep_PerSamplPerTaxon_bm_mean_per_group <- fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
-    dplyr::group_by(kmeans4gr) %>%
-    summarize(bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))
+    dplyr::group_by(  kmeans4gr) %>%
+    reframe(dateRi = unique(dateRi), bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))
   
   #for deriving carrying capacity 
   fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max <- fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
     dplyr::group_by(kmeans4gr) %>%
-    summarize( bm_mol_COD_perL_max = max(bm_mol_COD_perL, na.rm = TRUE))
+    reframe( bm_mol_COD_perL_max = max(bm_mol_COD_perL, na.rm = TRUE))
   
   ##########
   #derived parameters 
