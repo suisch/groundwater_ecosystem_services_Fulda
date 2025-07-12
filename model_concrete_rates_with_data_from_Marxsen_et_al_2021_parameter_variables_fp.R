@@ -1,18 +1,7 @@
-
 # function which returns ca. 30 variables 
-
 parameter_variables<- function(run){
-  
-  library(dplyr)
-  library(tidyr)
-  library(seas)#mkseas
-  library(DBI)#dbConnect
-  library(openxlsx)#read.xlsx
-  library(DescTools) ##year
-  library(patchwork) #for sticking together different plots 
-  
-  
-  urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/parameters_variables.xlsx"
+
+  urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/parameters_variables_fp.xlsx"
   parvar <- read.xlsx(urlfiletext, startRow = 3)
   
   delta_t          = parvar$dt[run] #days
