@@ -1,9 +1,10 @@
-Fulda_prec_plot <- function(){
+Fulda_prec_plot <- function(enddate){
   Fulda_daily_temp_ <- Fulda_daily_temp_ %>%
-  dplyr::filter(lubridate::year(dateRi) > 1977, lubridate::year(dateRi) < 1982)
+  dplyr::filter(lubridate::year(dateRi) > 1977 & lubridate::year(dateRi) <= lubridate::year(as.Date(enddate)))
 
 Fulda_daily_prec <- Fulda_daily_prec %>%
-  dplyr::filter(RS > -999)
+  dplyr::filter(RS > -999) %>% #das hier erst am 21.6. zugefuegt - warum hatte das fkt?
+  dplyr::filter(lubridate::year(dateRi) > 1977 & lubridate::year(dateRi) <= lubridate::year(as.Date(enddate)))
 
   #1.12.24 precipitaiton plot requires coeff.
   coeff <- 2
