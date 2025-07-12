@@ -115,15 +115,13 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
       total_Prok_mol_COD_L_max = max(total_Prok_mol_COD_L, na.rm =TRUE)       
     )
   
-  #here , all orgnisms' dryy mass is summed per sample
+  #here , all orgnisms' dry mass is summed per sample
   fauna_deep_PerSamplPerTaxonWide_bm_sum <- fauna_deep_PerSamplPerTaxonWide_bm %>%
     tidyr::pivot_longer(cols = names(fauna_deep_PerSamplPerTaxonWide_bm)[2:dim(fauna_deep_PerSamplPerTaxonWide_bm)[2]]) %>%
     dplyr::group_by(sampl) %>%
     dplyr::summarise(bm_perL = sum(value, na.rm = TRUE))
   
-  
-  
-  fauna_deep_PerSamplPerTaxonWide_bm_sum$bm_mol_perL <- fauna_deep_PerSamplPerTaxonWide_bm_sum$bm_perL / 24. / 1000000 #  divide by 1000 000 to transfrom from micro g to g, and then use the 24.6 g/ mol
+  fauna_deep_PerSamplPerTaxonWide_bm_sum$bm_mol_perL <- fauna_deep_PerSamplPerTaxonWide_bm_sum$bm_perL / 24. / 1000000 #  divide by 1000 000 to transfrom from micro g to g, and  use the 24.6 g/ mol molar mass of dry mass
   
   # 1.05 mol COD / mol dry mass - the same as for BDC, biodegradable organic carbon, which is respired to CO2 and NH4.  #COD of respiring dry mass is 1.05 g O2, see SI
   fauna_deep_PerSamplPerTaxonWide_bm_sum$bm_mol_COD_perL <- fauna_deep_PerSamplPerTaxonWide_bm_sum$bm_mol_perL *1.05 
@@ -137,7 +135,7 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   #used for start values
   fauna_deep_PerSamplPerTaxon_bm_mean_per_group <- fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
     dplyr::group_by(  kmeans4gr) %>%
-    reframe(dateRi = unique(dateRi), bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))
+    reframe(bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))
   
   #for deriving carrying capacity 
   fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max <- fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
@@ -353,6 +351,8 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   CC_table_MO <- as.data.frame(cbind(group = c(1:4), CC = c(MO_het_CC_gr1, MO_het_CC_gr2, MO_het_CC_gr3, MO_het_CC_gr4)))
   CC_table_fauna <- as.data.frame(cbind(group = c(1:4), CC = c(fauna_CC_gr1, fauna_CC_gr2, fauna_CC_gr3, fauna_CC_gr4)))
   
-  return(list(Fulda_daily_prec, Fulda_daily_temp_, chem_w_dat_ordered_per_date_1978_1981, chem_w_dat_ordered_per_date_1978_1981_mean_per_group, fauna_deep_PerSamplPerTaxon_bm_mean_per_group, t_0, t_max, DETRITUS_gr1_t0, DETRITUS_gr2_t0, DETRITUS_gr3_t0, DETRITUS_gr4_t0, BOC_gr1_t0, BOC_gr2_t0, BOC_gr3_t0, BOC_gr4_t0, MO_het_gr1_t0, MO_het_gr2_t0, MO_het_gr3_t0, MO_het_gr4_t0, fauna_gr1_t0, fauna_gr2_t0, fauna_gr3_t0, fauna_gr4_t0,  CC_table_MO, CC_table_fauna) )
+  return(list(Fulda_daily_prec, Fulda_daily_temp_, chem_w_dat_ordered_per_date_1978_1981, chem_w_dat_ordered_per_date_1978_1981_mean_per_group, fauna_deep_PerSamplPerTaxonWide_bm_sum, fauna_deep_PerSamplPerTaxon_bm_mean_per_group, t_0, t_max, DETRITUS_gr1_t0, DETRITUS_gr2_t0, DETRITUS_gr3_t0, DETRITUS_gr4_t0, BOC_gr1_t0, BOC_gr2_t0, BOC_gr3_t0, BOC_gr4_t0, MO_het_gr1_t0, MO_het_gr2_t0, MO_het_gr3_t0, MO_het_gr4_t0, fauna_gr1_t0, fauna_gr2_t0, fauna_gr3_t0, fauna_gr4_t0,  CC_table_MO, CC_table_fauna) )
+
+  
 }
 
