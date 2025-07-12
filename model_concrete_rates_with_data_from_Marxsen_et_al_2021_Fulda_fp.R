@@ -353,6 +353,6 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   CC_table_MO <- as.data.frame(cbind(group = c(1:4), CC = c(MO_het_CC_gr1, MO_het_CC_gr2, MO_het_CC_gr3, MO_het_CC_gr4)))
   CC_table_fauna <- as.data.frame(cbind(group = c(1:4), CC = c(fauna_CC_gr1, fauna_CC_gr2, fauna_CC_gr3, fauna_CC_gr4)))
   
-  return(list(Fulda_daily_prec, Fulda_daily_temp_, chem_w_dat_ordered_per_date_1978_1981, chem_w_dat_ordered_per_date_1978_1981_mean_per_group, fauna_deep_PerSamplPerTaxon_bm_mean_per_group, t_0, t_max, DETRITUS_gr1_t0, DETRITUS_gr2_t0, DETRITUS_gr3_t0, DETRITUS_gr4_t0, BOC_gr1_t0, BOC_gr2_t0, BOC_gr3_t0, BOC_gr4_t0, MO_het_gr1_t0, MO_het_gr2_t0, MO_het_gr3_t0, MO_het_gr4_t0, fauna_gr1_t0, fauna_gr2_t0, fauna_gr3_t0, fauna_gr4_t0, fauna_deep_PerSamplPerTaxon_bm_sum_per_P, CC_table_MO, CC_table_fauna) )
+  return(list(Fulda_daily_prec, Fulda_daily_temp_, chem_w_dat_ordered_per_date_1978_1981, chem_w_dat_ordered_per_date_1978_1981_mean_per_group, fauna_deep_PerSamplPerTaxon_bm_mean_per_group, t_0, t_max, DETRITUS_gr1_t0, DETRITUS_gr2_t0, DETRITUS_gr3_t0, DETRITUS_gr4_t0, BOC_gr1_t0, BOC_gr2_t0, BOC_gr3_t0, BOC_gr4_t0, MO_het_gr1_t0, MO_het_gr2_t0, MO_het_gr3_t0, MO_het_gr4_t0, fauna_gr1_t0, fauna_gr2_t0, fauna_gr3_t0, fauna_gr4_t0,  CC_table_MO, CC_table_fauna) )
 }
 
