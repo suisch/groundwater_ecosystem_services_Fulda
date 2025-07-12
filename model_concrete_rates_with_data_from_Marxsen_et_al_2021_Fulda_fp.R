@@ -194,7 +194,8 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
     fauna_gr1_t0_all = fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
       dplyr::filter(kmeans4gr ==1) %>%
       dplyr::select(bm_mol_COD_perL) %>%
-      dplyr::filter(!is.na( bm_mol_COD_perL)) 
+      dplyr::filter(!is.na( bm_mol_COD_perL))  %>%
+      dplyr::filter(! bm_mol_COD_perL == 0) # in contrast to all the other variables, at some dates, fauna is 0 in a group, even if at other dates there is fauna. Thus, in this case, start artificially with the first measured fauna biomass, because otherwise, fauna stays 0 because there is no biomass to start with that can digest etc.
     fauna_gr1_t0 <- fauna_gr1_t0_all[[1]][1]
     
     
@@ -247,7 +248,9 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
     fauna_gr2_t0_all = fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
       dplyr::filter(kmeans4gr ==2) %>%
       dplyr::select(bm_mol_COD_perL) %>%
-      dplyr::filter(!is.na( bm_mol_COD_perL)) 
+      dplyr::filter(!is.na( bm_mol_COD_perL))  %>%
+      dplyr::filter(! bm_mol_COD_perL == 0) # in contrast to all the other variables, at some dates, fauna is 0 in a group, even if at other dates there is fauna. Thus, in this case, start artificially with the first measured fauna biomass, because otherwise, fauna stays 0 because there is no biomass to start with that can digest etc.
+
     fauna_gr2_t0 <- fauna_gr2_t0_all[[1]][1]
     
     fauna_CC_gr2 <- fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$bm_mol_COD_perL_max[fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$kmeans4gr ==2] *factor_CC_MO
@@ -293,7 +296,8 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
     fauna_gr3_t0_all = fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
       dplyr::filter(kmeans4gr ==3) %>%
       dplyr::select(bm_mol_COD_perL) %>%
-      dplyr::filter(!is.na( bm_mol_COD_perL)) 
+      dplyr::filter(!is.na( bm_mol_COD_perL))  %>%
+      dplyr::filter(! bm_mol_COD_perL == 0) # in contrast to all the other variables, at some dates, fauna is 0 in a group, even if at other dates there is fauna. Thus, in this case, start artificially with the first measured fauna biomass, because otherwise, fauna stays 0 because there is no biomass to start with that can digest etc.
     fauna_gr3_t0 <- fauna_gr3_t0_all[[1]][1]
     
     fauna_CC_gr3 <- fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$bm_mol_COD_perL_max[fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$kmeans4gr ==3] *factor_CC_MO
@@ -339,7 +343,8 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
     fauna_gr4_t0_all = fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
       dplyr::filter(kmeans4gr ==4) %>%
       dplyr::select(bm_mol_COD_perL) %>%
-      dplyr::filter(!is.na( bm_mol_COD_perL)) 
+      dplyr::filter(!is.na( bm_mol_COD_perL))  %>%
+      dplyr::filter(! bm_mol_COD_perL == 0) # in contrast to all the other variables, at some dates, fauna is 0 in a group, even if at other dates there is fauna. Thus, in this case, start artificially with the first measured fauna biomass, because otherwise, fauna stays 0 because there is no biomass to start with that can digest etc.
     fauna_gr4_t0 <- fauna_gr4_t0_all[[1]][1]
     
     fauna_CC_gr4 <- fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$bm_mol_COD_perL_max [fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$kmeans4gr ==4] *factor_CC_MO
