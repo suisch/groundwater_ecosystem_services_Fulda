@@ -6,7 +6,7 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   ##########
   # data - weather
   ##########
-#  Fulda_daily_temp is produced from DWD values station 1526
+  #  Fulda_daily_temp is produced from DWD values station 1526
   
   urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/produkt_tu_termin_18850101_20231231_01526.txt"
   Fulda_daily_temp <- read.table(urlfiletext,sep = ";", header = TRUE)  
@@ -65,7 +65,7 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/Fuldaprokaryotes_deep_PerWellDepth_average.txt"
   Fuldaprokaryotes_deep_PerWellDepth_average  <- read.table(urlfiletext, sep = " ", header = TRUE)
   
-
+  
   urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/chem_w_date.txt"
   chem_w_date <- read.table(urlfiletext, sep = " ", header = TRUE)
   
@@ -84,20 +84,19 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   chem_w_dat_ordered_per_date_1978_1981$total_Prok_mol_COD_L <- chem_w_dat_ordered_per_date_1978_1981$total_Prok_mol_L *1.05 
   
   chem_w_dat_ordered_per_date_1978_1981$OS_mol_L <- chem_w_dat_ordered_per_date_1978_1981$OS /227.172 / 1000 #OS = organic substance was given in mg / L. calculate mol l-1 assuming Humic acid with the Molecular formula:	C9H9NO6; Average mass:	227.172; ChemSpider ID:	32820151; https://www.chemspider.com/Chemical-Structure.32820151.html. comes in mg / L . umreche  nach mol l-1 assuming Humic acid; Molecular formula:	C9H9NO6; Average mass:	227.172; ChemSpider ID:	32820151; https://www.chemspider.com/Chemical-Structure.32820151.html
-
+  
   #COD of humic acid is 7.5; check SI
   chem_w_dat_ordered_per_date_1978_1981$OS_mol_COD_L <- chem_w_dat_ordered_per_date_1978_1981$OS_mol_L *  7.5 #
   
   chem_w_dat_ordered_per_date_1978_1981$COD_mol_L <- chem_w_dat_ordered_per_date_1978_1981$COD / 32 / 1000 #calculating mg O2 into mol using molar mass of O2, because of chemical oxygen demand: 32 g / mol
   #in the Marxen 2021 paper, this was called COD, in contrast to OS which is a different method but likely encompasses more than just COD. Here, we boldly assume that COD is BOD, i.e. biologically degradable carbon (BOD). The code is here slightly misleading, therefore we relabel:
   names(chem_w_dat_ordered_per_date_1978_1981) <-  sub("COD_mol_L", "BOC_mol_COD_L" , names(chem_w_dat_ordered_per_date_1978_1981))
-  ACHTUNG - check ! hab ich von unten rauf geschoben
   
   chem_w_dat_ordered_per_date_1978_1981$kmeans4gr <- kmeans_chem4_exchgroups$V2[match(chem_w_dat_ordered_per_date_1978_1981$P, kmeans_chem4_exchgroups$V1)]
   
   chem_w_dat_ordered_per_date_1978_1981 <- chem_w_dat_ordered_per_date_1978_1981 %>%
     dplyr::filter(!is.na(kmeans4gr))
-
+  
   # calculating group-wise averages for start values of the simulation
   chem_w_dat_ordered_per_date_1978_1981_mean_per_group <- chem_w_dat_ordered_per_date_1978_1981 %>%
     dplyr::group_by(kmeans4gr) %>%
@@ -106,16 +105,16 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
       OS_mol_COD_L = mean(OS_mol_COD_L, na.rm =TRUE), 
       total_Prok_mol_COD_L = mean(total_Prok_mol_COD_L, na.rm =TRUE) )
   
-#calculate max per group for deriving carrying capacity 
-     chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max <- chem_w_dat_ordered_per_date_1978_1981 %>%
+  #calculate max per group for deriving carrying capacity 
+  chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max <- chem_w_dat_ordered_per_date_1978_1981 %>%
     dplyr::group_by(kmeans4gr) %>%
     summarize(
-BOC_mol_COD_L_max = max(BOC_mol_COD_L, na.rm = TRUE),  
+      BOC_mol_COD_L_max = max(BOC_mol_COD_L, na.rm = TRUE),  
       OS_mol_COD_L_max =  max(OS_mol_COD_L, na.rm =TRUE), 
-OS_mol_COD_L_max =  max(OS_mol_COD_L, na.rm =TRUE),  
-total_Prok_mol_COD_L_max = max(total_Prok_mol_COD_L, na.rm =TRUE)       
+      OS_mol_COD_L_max =  max(OS_mol_COD_L, na.rm =TRUE),  
+      total_Prok_mol_COD_L_max = max(total_Prok_mol_COD_L, na.rm =TRUE)       
     )
-
+  
   #here , all orgnisms' dryy mass is summed per sample
   fauna_deep_PerSamplPerTaxonWide_bm_sum <- fauna_deep_PerSamplPerTaxonWide_bm %>%
     tidyr::pivot_longer(cols = names(fauna_deep_PerSamplPerTaxonWide_bm)[2:dim(fauna_deep_PerSamplPerTaxonWide_bm)[2]]) %>%
@@ -123,7 +122,6 @@ total_Prok_mol_COD_L_max = max(total_Prok_mol_COD_L, na.rm =TRUE)
     dplyr::summarise(bm_perL = sum(value, na.rm = TRUE))
   
   
-  TODO das war hier falsch - have to correct in original as well
   
   fauna_deep_PerSamplPerTaxonWide_bm_sum$bm_mol_perL <- fauna_deep_PerSamplPerTaxonWide_bm_sum$bm_perL / 24. / 1000000 #  divide by 1000 000 to transfrom from micro g to g, and then use the 24.6 g/ mol
   
@@ -141,11 +139,11 @@ total_Prok_mol_COD_L_max = max(total_Prok_mol_COD_L, na.rm =TRUE)
     dplyr::group_by(kmeans4gr) %>%
     summarize(bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))
   
-#for deriving carrying capacity 
-fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max <- fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
+  #for deriving carrying capacity 
+  fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max <- fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
     dplyr::group_by(kmeans4gr) %>%
     summarize( bm_mol_COD_perL_max = max(bm_mol_COD_perL, na.rm = TRUE))
- 
+  
   ##########
   #derived parameters 
   ##########
@@ -165,7 +163,7 @@ fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max <- fauna_deep_PerSamplPerTaxon
   
   #assumption: I start the model with the first of the values measured 
   
-    DETRITUS_gr1_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
+  DETRITUS_gr1_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
     dplyr::filter(kmeans4gr ==1) %>%
     dplyr::select(OS_mol_COD_L) %>%
     dplyr::filter(!is.na( OS_mol_COD_L)) 
