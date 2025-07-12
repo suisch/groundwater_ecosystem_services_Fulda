@@ -65,31 +65,6 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/Fuldaprokaryotes_deep_PerWellDepth_average.txt"
   Fuldaprokaryotes_deep_PerWellDepth_average  <- read.table(urlfiletext, sep = " ", header = TRUE)
   
-  #column total cell numbers is incomplete , therefore, calculate again here
-  Fuldaprokaryotes_deep_PerWellDepth_average$total_cells <- Fuldaprokaryotes_deep_PerWellDepth_average$attached_rod_0to1+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_rod_1to2+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_rod_2to3+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_rod_3to4+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_rod_4to+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_cocci_0to0_5+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_cocci_0_5to1+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_cocci_1to2+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_cocci_2to+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$attached_div+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_rod_0to1+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_rod_1to2+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_rod_2to3+
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_rod_3to4+
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_rod_4to+
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_cocci_0to0_5+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_cocci_0_5to1+ 
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_cocci_1to2+
-    Fuldaprokaryotes_deep_PerWellDepth_average$free_cocci_2to
-  
-  TODO change in orig # given as 10^ 3 / mL,   calculating here: ^1-6 / mL 
-  also: not used in the followign - instead , dry mass is used
-    Fuldaprokaryotes_deep_PerWellDepth_average$total_cells <- Fuldaprokaryotes_deep_PerWellDepth_average$total_cells /10^3
-  
 
   urlfiletext <- "https://raw.github.com/suisch/groundwater_ecosystem_services_Fulda/main/chem_w_date.txt"
   chem_w_date <- read.table(urlfiletext, sep = " ", header = TRUE)
@@ -113,7 +88,6 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   #COD of humic acid is 7.5; check SI
   chem_w_dat_ordered_per_date_1978_1981$OS_mol_COD_L <- chem_w_dat_ordered_per_date_1978_1981$OS_mol_L *  7.5 #
   
-  
   chem_w_dat_ordered_per_date_1978_1981$COD_mol_L <- chem_w_dat_ordered_per_date_1978_1981$COD / 32 / 1000 #calculating mg O2 into mol using molar mass of O2, because of chemical oxygen demand: 32 g / mol
   #in the Marxen 2021 paper, this was called COD, in contrast to OS which is a different method but likely encompasses more than just COD. Here, we boldly assume that COD is BOD, i.e. biologically degradable carbon (BOD). The code is here slightly misleading, therefore we relabel:
   names(chem_w_dat_ordered_per_date_1978_1981) <-  sub("COD_mol_L", "BOC_mol_COD_L" , names(chem_w_dat_ordered_per_date_1978_1981))
@@ -132,7 +106,16 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
       OS_mol_COD_L = mean(OS_mol_COD_L, na.rm =TRUE), 
       total_Prok_mol_COD_L = mean(total_Prok_mol_COD_L, na.rm =TRUE) )
   
-  
+#calculate max per group for deriving carrying capacity 
+     chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max <- chem_w_dat_ordered_per_date_1978_1981 %>%
+    dplyr::group_by(kmeans4gr) %>%
+    summarize(
+BOC_mol_COD_L_max = max(BOC_mol_COD_L, na.rm = TRUE),  
+      OS_mol_COD_L_max =  max(OS_mol_COD_L, na.rm =TRUE), 
+OS_mol_COD_L_max =  max(OS_mol_COD_L, na.rm =TRUE),  
+total_Prok_mol_COD_L_max = max(total_Prok_mol_COD_L, na.rm =TRUE)       
+    )
+
   #here , all orgnisms' dryy mass is summed per sample
   fauna_deep_PerSamplPerTaxonWide_bm_sum <- fauna_deep_PerSamplPerTaxonWide_bm %>%
     tidyr::pivot_longer(cols = names(fauna_deep_PerSamplPerTaxonWide_bm)[2:dim(fauna_deep_PerSamplPerTaxonWide_bm)[2]]) %>%
@@ -158,6 +141,11 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
     dplyr::group_by(kmeans4gr) %>%
     summarize(bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))
   
+#for deriving carrying capacity 
+fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max <- fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
+    dplyr::group_by(kmeans4gr) %>%
+    summarize( bm_mol_COD_perL_max = max(bm_mol_COD_perL, na.rm = TRUE))
+ 
   ##########
   #derived parameters 
   ##########
@@ -228,7 +216,6 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
     dplyr::filter(kmeans4gr ==2) %>%
     dplyr::select(OS_mol_COD_L) %>%
     dplyr::filter(!is.na( OS_mol_COD_L)) 
-  #22.6.25 das war ein FEhler - sowas trifft nur auf linear model zu, aber das ist hier nicht 
   DETRITUS_gr2_t0 <- DETRITUS_gr2_t0_all[[1]][1]
   
   
