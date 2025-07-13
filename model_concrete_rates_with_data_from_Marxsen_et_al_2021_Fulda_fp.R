@@ -162,29 +162,34 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   #assumption: I start the model with the first of the values measured 
   
   DETRITUS_gr1_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
+    dplyr::filter(!is.na( OS_mol_COD_L)) %>%
     dplyr::filter(kmeans4gr ==1) %>%
-    dplyr::select(OS_mol_COD_L) %>%
-    dplyr::filter(!is.na( OS_mol_COD_L)) 
-  DETRITUS_gr1_t0 <- DETRITUS_gr1_t0_all[[1]][1]
+    dplyr::group_by(Date) %>%
+    dplyr::reframe(OS_mol_COD_L = mean(OS_mol_COD_L, na.rm = TRUE))
+    DETRITUS_gr1_t0 <- DETRITUS_gr1_t0_all$OS_mol_COD_L[1]
   
   
   BOC_gr1_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
+    dplyr::filter(!is.na( BOC_mol_COD_L)) %>%
     dplyr::filter(kmeans4gr ==1) %>%
-    dplyr::select(BOC_mol_COD_L) %>%
-    dplyr::filter(!is.na( BOC_mol_COD_L)) 
-  BOC_gr1_t0 <- BOC_gr1_t0_all[[1]][1]
+    dplyr::group_by(Date) %>%
+    dplyr::reframe(BOC_mol_COD_L = mean(BOC_mol_COD_L, na.rm = TRUE))
+    BOC_gr1_t0 <- BOC_gr1_t0_all$BOC_mol_COD_L[1]
   
   if(scenario_with_1_or_without_0_MO == 1) {
-    #carrying capacity assumed is the max MO_het abundance measured plus 10% which never are seen in the field due to grazing, "mortality", etc.
-    MO_het_CC_gr1 <- chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max$total_Prok_mol_COD_L_max[chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max$kmeans4gr ==1]*factor_CC_MO
     
     MO_het_gr1_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
+    dplyr::filter(!is.na( total_Prok_mol_COD_L)) %>%
       dplyr::filter(kmeans4gr ==1) %>%
-      dplyr::select(total_Prok_mol_COD_L) %>%
-      dplyr::filter(!is.na( total_Prok_mol_COD_L)) 
-    MO_het_gr1_t0 <- MO_het_gr1_t0_all[[1]][1]
+      dplyr::group_by(Date) %>%
+      dplyr::reframe(total_Prok_mol_COD_L = mean(total_Prok_mol_COD_L, na.rm = TRUE))
     
-  }else{
+    MO_het_gr1_t0 <- MO_het_gr1_t0_all$total_Prok_mol_COD_L[1]
+    
+    #carrying capacity assumed is the max MO_het abundance measured plus 10% which never are seen in the field due to grazing, "mortality", etc.
+    MO_het_CC_gr1 <- chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max$total_Prok_mol_COD_L_max[chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max$kmeans4gr ==1]*factor_CC_MO
+  
+    }else{
     MO_het_gr1_t0  = 0
     MO_het_CC_gr1 <- 0
   }
@@ -192,11 +197,13 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   if(scenario_with_1_or_without_0_fauna == 1) {
     
     fauna_gr1_t0_all = fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
+    dplyr::filter(!is.na( bm_mol_COD_perL)) %>%
       dplyr::filter(kmeans4gr ==1) %>%
-      dplyr::select(bm_mol_COD_perL) %>%
-      dplyr::filter(!is.na( bm_mol_COD_perL))  %>%
-      dplyr::filter(! bm_mol_COD_perL == 0) # in contrast to all the other variables, at some dates, fauna is 0 in a group, even if at other dates there is fauna. Thus, in this case, start artificially with the first measured fauna biomass above 0, because otherwise, fauna stays 0 because there is no biomass to start with that can digest etc.
-    fauna_gr1_t0 <- fauna_gr1_t0_all[[1]][1]
+      dplyr::group_by(dateRi) %>%
+      dplyr::reframe(bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))  %>%
+      dplyr::filter(! bm_mol_COD_perL == 0) 
+    
+    fauna_gr1_t0 <- fauna_gr1_t0_all$bm_mol_COD_perL[1]
     
     
     fauna_CC_gr1 <- fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$bm_mol_COD_perL_max[fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$kmeans4gr ==1]*factor_CC_MO
@@ -210,26 +217,31 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   
   
   DETRITUS_gr2_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
+    dplyr::filter(!is.na( OS_mol_COD_L)) %>%
     dplyr::filter(kmeans4gr ==2) %>%
-    dplyr::select(OS_mol_COD_L) %>%
-    dplyr::filter(!is.na( OS_mol_COD_L)) 
-  DETRITUS_gr2_t0 <- DETRITUS_gr2_t0_all[[1]][1]
+    dplyr::group_by(Date) %>%
+    dplyr::reframe(OS_mol_COD_L = mean(OS_mol_COD_L, na.rm = TRUE))
+  DETRITUS_gr2_t0 <- DETRITUS_gr2_t0_all$OS_mol_COD_L[1]
   
   
   
   BOC_gr2_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
+    dplyr::filter(!is.na( BOC_mol_COD_L)) %>%
     dplyr::filter(kmeans4gr ==2) %>%
-    dplyr::select(BOC_mol_COD_L) %>%
-    dplyr::filter(!is.na( BOC_mol_COD_L)) 
-  BOC_gr2_t0 <- BOC_gr2_t0_all[[1]][1]
+    dplyr::group_by(Date) %>%
+    dplyr::reframe(BOC_mol_COD_L = mean(BOC_mol_COD_L, na.rm = TRUE))
+  
+  BOC_gr2_t0 <- BOC_gr2_t0_all$BOC_mol_COD_L[1]
   
   if(scenario_with_1_or_without_0_MO == 1) {
     
     MO_het_gr2_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
+      dplyr::filter(!is.na( total_Prok_mol_COD_L)) %>%
       dplyr::filter(kmeans4gr ==2) %>%
-      dplyr::select(total_Prok_mol_COD_L) %>%
-      dplyr::filter(!is.na( total_Prok_mol_COD_L)) 
-    MO_het_gr2_t0 <- MO_het_gr2_t0_all[[1]][1]
+      dplyr::group_by(Date) %>%
+      dplyr::reframe(total_Prok_mol_COD_L = mean(total_Prok_mol_COD_L, na.rm = TRUE))
+    
+    MO_het_gr2_t0 <- MO_het_gr2_t0_all$total_Prok_mol_COD_L[1]
     
     
     #carrying capacity assumed is the max MO_het abundance measured (plus x%, see parameters_variables.xlsx) 
@@ -246,12 +258,13 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   if(scenario_with_1_or_without_0_fauna == 1) {
     
     fauna_gr2_t0_all = fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
+      dplyr::filter(!is.na( bm_mol_COD_perL)) %>%
       dplyr::filter(kmeans4gr ==2) %>%
-      dplyr::select(bm_mol_COD_perL) %>%
-      dplyr::filter(!is.na( bm_mol_COD_perL))  %>%
-      dplyr::filter(! bm_mol_COD_perL == 0) # in contrast to all the other variables, at some dates, fauna is 0 in a group, even if at other dates there is fauna. Thus, in this case, start artificially with the first measured fauna biomass above 0, because otherwise, fauna stays 0 because there is no biomass to start with that can digest etc.
-
-    fauna_gr2_t0 <- fauna_gr2_t0_all[[1]][1]
+      dplyr::group_by(dateRi) %>%
+      dplyr::reframe(bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))  %>%
+      dplyr::filter(! bm_mol_COD_perL == 0) 
+    
+    fauna_gr2_t0 <- fauna_gr2_t0_all$bm_mol_COD_perL[1]
     
     fauna_CC_gr2 <- fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$bm_mol_COD_perL_max[fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$kmeans4gr ==2] *factor_CC_MO
   }else{
@@ -261,28 +274,32 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   
   
   DETRITUS_gr3_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
+    dplyr::filter(!is.na( OS_mol_COD_L)) %>%
     dplyr::filter(kmeans4gr ==3) %>%
-    dplyr::select(OS_mol_COD_L) %>%
-    dplyr::filter(!is.na( OS_mol_COD_L)) 
-  DETRITUS_gr3_t0 <- DETRITUS_gr3_t0_all[[1]][1]
+    dplyr::group_by(Date) %>%
+    dplyr::reframe(OS_mol_COD_L = mean(OS_mol_COD_L, na.rm = TRUE))
+  DETRITUS_gr3_t0 <- DETRITUS_gr3_t0_all$OS_mol_COD_L[1]
   
   
   
   BOC_gr3_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
-    dplyr::filter(kmeans4gr ==3) %>% 
-    dplyr::select(BOC_mol_COD_L) %>%
-    dplyr::filter(!is.na( BOC_mol_COD_L)) 
-  BOC_gr3_t0 <- BOC_gr3_t0_all[[1]][1]
+    dplyr::filter(!is.na( BOC_mol_COD_L)) %>%
+    dplyr::filter(kmeans4gr ==3) %>%
+    dplyr::group_by(Date) %>%
+    dplyr::reframe(BOC_mol_COD_L = mean(BOC_mol_COD_L, na.rm = TRUE))
+  
+  BOC_gr3_t0 <- BOC_gr3_t0_all$BOC_mol_COD_L[1]
   
   
   if(scenario_with_1_or_without_0_MO == 1) {
-    MO_het_gr3_t0   = chem_w_dat_ordered_per_date_1978_1981_mean_per_group$total_Prok_mol_COD_L[chem_w_dat_ordered_per_date_1978_1981_mean_per_group$kmeans4gr ==3] 
     
     MO_het_gr3_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
-      dplyr::filter(kmeans4gr ==3) %>%#corrected 21.6.25
-      dplyr::select(total_Prok_mol_COD_L) %>%
-      dplyr::filter(!is.na( total_Prok_mol_COD_L)) 
-    MO_het_gr3_t0 <- MO_het_gr3_t0_all[[1]][1]
+      dplyr::filter(!is.na( total_Prok_mol_COD_L)) %>%
+      dplyr::filter(kmeans4gr ==3) %>%
+      dplyr::group_by(Date) %>%
+      dplyr::reframe(total_Prok_mol_COD_L = mean(total_Prok_mol_COD_L, na.rm = TRUE))
+    
+    MO_het_gr3_t0 <- MO_het_gr3_t0_all$total_Prok_mol_COD_L[1]
     
     
     MO_het_CC_gr3 <- chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max$total_Prok_mol_COD_L_max[chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max$kmeans4gr ==3] *factor_CC_MO
@@ -294,11 +311,13 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   if(scenario_with_1_or_without_0_fauna == 1) {
     
     fauna_gr3_t0_all = fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
+      dplyr::filter(!is.na( bm_mol_COD_perL)) %>%
       dplyr::filter(kmeans4gr ==3) %>%
-      dplyr::select(bm_mol_COD_perL) %>%
-      dplyr::filter(!is.na( bm_mol_COD_perL))  %>%
-      dplyr::filter(! bm_mol_COD_perL == 0) # in contrast to all the other variables, at some dates, fauna is 0 in a group, even if at other dates there is fauna. Thus, in this case, start artificially with the first measured fauna biomass above 0, because otherwise, fauna stays 0 because there is no biomass to start with that can digest etc.
-    fauna_gr3_t0 <- fauna_gr3_t0_all[[1]][1]
+      dplyr::group_by(dateRi) %>%
+      dplyr::reframe(bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))  %>%
+      dplyr::filter(! bm_mol_COD_perL == 0) 
+    
+    fauna_gr3_t0 <- fauna_gr3_t0_all$bm_mol_COD_perL[1]
     
     fauna_CC_gr3 <- fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$bm_mol_COD_perL_max[fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$kmeans4gr ==3] *factor_CC_MO
   }else{
@@ -309,27 +328,32 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   
   
   DETRITUS_gr4_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
-    dplyr::filter(kmeans4gr ==4) %>%#corrected 21.6.25
-    dplyr::select(OS_mol_COD_L) %>%
-    dplyr::filter(!is.na( OS_mol_COD_L)) 
-  DETRITUS_gr4_t0 <- DETRITUS_gr4_t0_all[[1]][1]
+    dplyr::filter(!is.na( OS_mol_COD_L)) %>%
+    dplyr::filter(kmeans4gr ==4) %>%
+    dplyr::group_by(Date) %>%
+    dplyr::reframe(OS_mol_COD_L = mean(OS_mol_COD_L, na.rm = TRUE))
+  DETRITUS_gr4_t0 <- DETRITUS_gr4_t0_all$OS_mol_COD_L[1]
   
   
   
   BOC_gr4_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
-    dplyr::filter(kmeans4gr ==4) %>%#corrected 21.6.25
-    dplyr::select(BOC_mol_COD_L) %>%
-    dplyr::filter(!is.na( BOC_mol_COD_L)) 
-  BOC_gr4_t0 <- BOC_gr4_t0_all[[1]][1]
+    dplyr::filter(!is.na( BOC_mol_COD_L)) %>%
+    dplyr::filter(kmeans4gr ==4) %>%
+    dplyr::group_by(Date) %>%
+    dplyr::reframe(BOC_mol_COD_L = mean(BOC_mol_COD_L, na.rm = TRUE))
+  
+  BOC_gr4_t0 <- BOC_gr4_t0_all$BOC_mol_COD_L[1]
   
   
   if(scenario_with_1_or_without_0_MO == 1) {
     
     MO_het_gr4_t0_all = chem_w_dat_ordered_per_date_1978_1981 %>%
-      dplyr::filter(kmeans4gr ==4) %>%#corrected 21.6.25
-      dplyr::select(total_Prok_mol_COD_L) %>%
-      dplyr::filter(!is.na( total_Prok_mol_COD_L)) 
-    MO_het_gr4_t0 <- MO_het_gr4_t0_all[[1]][1]
+      dplyr::filter(!is.na( total_Prok_mol_COD_L)) %>%
+      dplyr::filter(kmeans4gr ==4) %>%
+      dplyr::group_by(Date) %>%
+      dplyr::reframe(total_Prok_mol_COD_L = mean(total_Prok_mol_COD_L, na.rm = TRUE))
+    
+    MO_het_gr4_t0 <- MO_het_gr4_t0_all$total_Prok_mol_COD_L[1]
     
     #carrying capacity assumed is the max MO_het abundance measured plus 10% which never are seen in the field due to grazing, "mortality", etc.
     MO_het_CC_gr4 <- chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max$total_Prok_mol_COD_L_max[chem_w_dat_ordered_per_date_1978_1981_mean_per_group_max$kmeans4gr ==4] *factor_CC_MO
@@ -341,11 +365,13 @@ fulda_variables<- function(run, factor_CC_MO, factor_CC_fauna){
   if(scenario_with_1_or_without_0_fauna == 1) {
     
     fauna_gr4_t0_all = fauna_deep_PerSamplPerTaxonWide_bm_sum %>%
+      dplyr::filter(!is.na( bm_mol_COD_perL)) %>%
       dplyr::filter(kmeans4gr ==4) %>%
-      dplyr::select(bm_mol_COD_perL) %>%
-      dplyr::filter(!is.na( bm_mol_COD_perL))  %>%
-      dplyr::filter(! bm_mol_COD_perL == 0) # in contrast to all the other variables, at some dates, fauna is 0 in a group, even if at other dates there is fauna. Thus, in this case, start artificially with the first measured fauna biomass above 0, because otherwise, fauna stays 0 because there is no biomass to start with that can digest etc.
-    fauna_gr4_t0 <- fauna_gr4_t0_all[[1]][1]
+      dplyr::group_by(dateRi) %>%
+      dplyr::reframe(bm_mol_COD_perL = mean(bm_mol_COD_perL, na.rm = TRUE))  %>%
+      dplyr::filter(! bm_mol_COD_perL == 0) 
+    
+    fauna_gr4_t0 <- fauna_gr4_t0_all$bm_mol_COD_perL[1]
     
     fauna_CC_gr4 <- fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$bm_mol_COD_perL_max [fauna_deep_PerSamplPerTaxon_bm_mean_per_group_max$kmeans4gr ==4] *factor_CC_MO
   }else{
